@@ -1,49 +1,31 @@
-Fetching registry information from https://github.com/microsoft/vcpkg (HEAD)...
 Detecting compiler hash for triplet x64-windows...
 Compiler found: C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe
-The following packages will be built and installed:
-  * egl-registry:x64-windows@2025-05-27 -- git+https://github.com/microsoft/vcpkg@980ed62fded868a1cb66460b32704aca030af013
-    glad[core,loader]:x64-windows@0.1.36 -- git+https://github.com/microsoft/vcpkg@fa93b14c1581057e1d14650f5f15c9b0757dd548
-  * opengl-registry:x64-windows@2026-08-03 -- git+https://github.com/microsoft/vcpkg@afb3b830710697505bc6d59cb1fbed9ca29c7e99
-    sdl3:x64-windows@3.4.16 -- git+https://github.com/microsoft/vcpkg@a0345eab430390a0758a40d2062eda9cb43f670c
-  * vcpkg-cmake:x64-windows@2025-08-07 -- git+https://github.com/microsoft/vcpkg@16b9390dfeaca6df7288ba3f827e40e48e5fc942
-  * vcpkg-cmake-config:x64-windows@2026-07-21 -- git+https://github.com/microsoft/vcpkg@51befcb03097f8d19c1c59f9ec3625e69d85322a
-Additional packages (*) will be modified to complete this operation.
-Restored 6 package(s) from C:\Users\abelno\AppData\Local\vcpkg\archives in 301 ms. Use --debug to see more details.
-Installing 1/6 vcpkg-cmake-config:x64-windows@2026-07-21...
-vcpkg-cmake-config:x64-windows@2026-07-21 package ABI: 63dfd3e7e531585aaa2a5c16f354d19beec8b8bc71d0c509acd51cbd6eebb4bc
-Elapsed time to handle vcpkg-cmake-config:x64-windows: 10.8 ms
-Installing 2/6 vcpkg-cmake:x64-windows@2025-08-07...
-vcpkg-cmake:x64-windows@2025-08-07 package ABI: 0a1744074d24a594a6facd62aa31b4da31800953aaaac5be6a1db5eeb0820375
-Elapsed time to handle vcpkg-cmake:x64-windows: 33 ms
-Installing 3/6 egl-registry:x64-windows@2025-05-27...
-egl-registry:x64-windows@2025-05-27 package ABI: 36bd244190d7e1410c8ce30317e1bb7ea32f362a8e6946b38ef02daf017d2d42
-Elapsed time to handle egl-registry:x64-windows: 30.1 ms
-Installing 4/6 opengl-registry:x64-windows@2026-08-03...
-opengl-registry:x64-windows@2026-08-03 package ABI: fb2e6896f847013efc4187e65e07994fbd0a8ee97ea8d82e767aaffbf48d6e67
-Elapsed time to handle opengl-registry:x64-windows: 48.8 ms
-Installing 5/6 glad[core,loader]:x64-windows@0.1.36...
-glad[core,loader]:x64-windows@0.1.36 package ABI: eb575be4a3c4dc128eb6bc91d93cae98ab9e8b5cfb191072dedb438b914bb046
-Elapsed time to handle glad:x64-windows: 77.1 ms
-Installing 6/6 sdl3:x64-windows@3.4.16...
-sdl3:x64-windows@3.4.16 package ABI: 4ea31df670b4b707d93c636d1ede9038a2e7fe2987ab7b9977c3adae4e3c2a3b
-Elapsed time to handle sdl3:x64-windows: 176 ms
-Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
-Some packages did not declare an SPDX license. Check the `copyright` file for each package for more information about their licensing.
-Packages installed in this vcpkg installation declare the following licenses:
-Apache-2.0
-BSD-3-Clause
-MIT
-Zlib
+The following packages are already installed:
+  * egl-registry:x64-windows@2025-05-27
+    glad[core,loader]:x64-windows@0.1.36
+    glm:x64-windows@1.0.3
+  * opengl-registry:x64-windows@2026-08-03
+    sdl3:x64-windows@3.4.16
+  * vcpkg-cmake:x64-windows@2025-08-07
+  * vcpkg-cmake-config:x64-windows@2026-07-21
 glad provides CMake targets:
 
   # this is heuristically generated, and may not be correct
   find_package(glad CONFIG REQUIRED)
   target_link_libraries(main PRIVATE glad::glad)
 
+The package glm provides CMake targets:
+
+    find_package(glm CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE glm::glm)
+
+    # Or use the header-only version
+    find_package(glm CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE glm::glm-header-only)
+
 sdl3 provides CMake targets:
 
   find_package(SDL3 CONFIG REQUIRED)
   target_link_libraries(main PRIVATE SDL3::SDL3)
 
-All requested installations completed successfully in: 384 ms
+All requested installations completed successfully in: 189 us

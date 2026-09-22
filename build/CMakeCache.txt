@@ -274,6 +274,9 @@ _VCPKG_INSTALLED_DIR:PATH=C:/Users/abelno/Documents/GitHub/MotorNuestor/build/vc
 //The directory containing a CMake configuration file for glad.
 glad_DIR:PATH=C:/Users/abelno/Documents/GitHub/MotorNuestor/build/vcpkg_installed/x64-windows/share/glad
 
+//The directory containing a CMake configuration file for glm.
+glm_DIR:PATH=C:/Users/abelno/Documents/GitHub/MotorNuestor/build/vcpkg_installed/x64-windows/share/glm
+
 
 ########################
 # INTERNAL cache entries

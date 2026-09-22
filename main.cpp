@@ -58,11 +58,16 @@ int main(int argc, char* argv[]) {
 	float vertices[] = {
 		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
 		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f };
+		0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f };
 	GLuint vBuff;
 	glGenBuffers(1, &vBuff);
 	glBindBuffer(GL_ARRAY_BUFFER, vBuff);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	unsigned int indices[] = {
+		0,1,2,2,1,3
+	}
 
 	bool running = true;
 	while (running)
@@ -106,12 +111,15 @@ int main(int argc, char* argv[]) {
 		//2. glColorPointer(3, GL_FLOAT, 0, NULL);
 
 		//3.
+
 		glBindBuffer(GL_ARRAY_BUFFER, vBuff);
 		glVertexPointer(3, GL_FLOAT, sizeof(float) * 6, NULL);
 		glColorPointer(3, GL_FLOAT, sizeof(float) * 6, reinterpret_cast<void*>(sizeof(float) * 3));
 
 		//1. 2. 3.
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNISGNED_INT, NULL);
 
 		SDL_GL_SwapWindow(wdn);
 	}

@@ -55,3 +55,12 @@ Abi: 4ea31df670b4b707d93c636d1ede9038a2e7fe2987ab7b9977c3adae4e3c2a3b
 Description: Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
 Status: install ok installed
 
+Package: glm
+Version: 1.0.3
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: f7ac835ee6ecb067ac316cfd15ef7356616157dbed28aa064969fe71774e2648
+Description: OpenGL Mathematics (GLM)
+Status: install ok installed
+
