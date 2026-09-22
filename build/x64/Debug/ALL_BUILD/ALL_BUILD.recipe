@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\abelno\MotorNuestor\build\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>C:\Users\abelno\Documents\GitHub\MotorNuestor\build\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\abelno\MotorNuestor\build\Debug\MotorNuestor.exe</FullPath>
+      <FullPath>C:\Users\abelno\Documents\GitHub\MotorNuestor\build\Debug\MotorNuestor.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\abelno\MotorNuestor\build\x64\Debug\ALL_BUILD</FullPath>
+      <FullPath>C:\Users\abelno\Documents\GitHub\MotorNuestor\build\x64\Debug\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

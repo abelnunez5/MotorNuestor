@@ -12,6 +12,40 @@ Multi-Arch: same
 Abi: 0a1744074d24a594a6facd62aa31b4da31800953aaaac5be6a1db5eeb0820375
 Status: install ok installed
 
+Package: egl-registry
+Version: 2025-05-27
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 36bd244190d7e1410c8ce30317e1bb7ea32f362a8e6946b38ef02daf017d2d42
+Description: EGL API and Extension Registry
+Status: install ok installed
+
+Package: opengl-registry
+Version: 2026-08-03
+Depends: egl-registry
+Architecture: x64-windows
+Multi-Arch: same
+Abi: fb2e6896f847013efc4187e65e07994fbd0a8ee97ea8d82e767aaffbf48d6e67
+Description: OpenGL, OpenGL ES, and OpenGL ES-SC API and Extension Registry
+Status: install ok installed
+
+Package: glad
+Version: 0.1.36
+Depends: egl-registry, opengl-registry, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: eb575be4a3c4dc128eb6bc91d93cae98ab9e8b5cfb191072dedb438b914bb046
+Description: Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs.
+Default-Features: loader
+Status: install ok installed
+
+Package: glad
+Feature: loader
+Architecture: x64-windows
+Multi-Arch: same
+Description: Generate loader logic.
+Status: install ok installed
+
 Package: sdl3
 Version: 3.4.16
 Depends: vcpkg-cmake, vcpkg-cmake-config

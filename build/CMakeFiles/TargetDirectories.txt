@@ -1,3 +1,3 @@
-C:/Users/abelno/MotorNuestor/build/CMakeFiles/MotorNuestor.dir
-C:/Users/abelno/MotorNuestor/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/abelno/MotorNuestor/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/abelno/Documents/GitHub/MotorNuestor/build/CMakeFiles/MotorNuestor.dir
+C:/Users/abelno/Documents/GitHub/MotorNuestor/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/abelno/Documents/GitHub/MotorNuestor/build/CMakeFiles/ZERO_CHECK.dir

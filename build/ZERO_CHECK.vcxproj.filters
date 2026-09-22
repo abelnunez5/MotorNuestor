@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\abelno\MotorNuestor\build\CMakeFiles\ed8fcac3506d9518c1b39c807539236c\generate.stamp.rule">
+    <CustomBuild Include="C:\Users\abelno\Documents\GitHub\MotorNuestor\build\CMakeFiles\7155ecf121918a2194981b527010ab73\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{16266806-9AC8-308E-8DBF-2ED9B5F8C610}</UniqueIdentifier>
+      <UniqueIdentifier>{D25481F4-11C2-36D7-AE09-8816DDA9C50B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

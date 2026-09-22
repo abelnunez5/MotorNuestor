@@ -1,6 +1,6 @@
-^C:\USERS\ABELNO\MOTORNUESTOR\CMAKELISTS.TXT
+^C:\USERS\ABELNO\DOCUMENTS\GITHUB\MOTORNUESTOR\CMAKELISTS.TXT
 setlocal
-C:\Users\abelno\Downloads\cmake-4.4.3-windows-x86_64\cmake-4.4.3-windows-x86_64\bin\cmake.exe -SC:/Users/abelno/MotorNuestor -BC:/Users/abelno/MotorNuestor/build --check-stamp-file C:/Users/abelno/MotorNuestor/build/CMakeFiles/generate.stamp
+C:\Users\abelno\Downloads\cmake-4.4.3-windows-x86_64\cmake-4.4.3-windows-x86_64\bin\cmake.exe -SC:/Users/abelno/Documents/GitHub/MotorNuestor -BC:/Users/abelno/Documents/GitHub/MotorNuestor/build --check-stamp-file C:/Users/abelno/Documents/GitHub/MotorNuestor/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
