@@ -1,0 +1,10 @@
+^C:\USERS\ABELNO\MOTORNUESTOR\BUILD\CMAKEFILES\ED8FCAC3506D9518C1B39C807539236C\GENERATE.STAMP.RULE
+setlocal
+C:\Users\abelno\Downloads\cmake-4.4.3-windows-x86_64\cmake-4.4.3-windows-x86_64\bin\cmake.exe -SC:/Users/abelno/MotorNuestor -BC:/Users/abelno/MotorNuestor/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/abelno/MotorNuestor/build/MotorNuestor.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
