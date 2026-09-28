@@ -5,7 +5,7 @@ project(MotorNuestor)
 find_package(SDL3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
-find_package(DevIL CONFIG REQUIRED)
+find_package(DevIL REQUIRED)
 
 add_executable(MotorNuestor main.cpp)
 
