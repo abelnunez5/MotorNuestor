@@ -5,7 +5,8 @@ project(MotorNuestor)
 find_package(SDL3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(DevIL CONFIG REQUIRED)
 
 add_executable(MotorNuestor main.cpp)
 
-target_link_libraries(MotorNuestor PRIVATE SDL3::SDL3 glad::glad glm::glm)
+target_link_libraries(MotorNuestor PRIVATE SDL3::SDL3 glad::glad glm::glm DevIL::IL DevIL::ILU)
