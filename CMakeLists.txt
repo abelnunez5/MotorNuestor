@@ -6,8 +6,8 @@ find_package(SDL3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(DevIL REQUIRED)
- find_package(assimp CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
-add_executable(MotorNuestor main.cpp)
+add_executable(MotorNuestor main.cpp FBXLoader.cpp FBXLoader.h)
 
 target_link_libraries(MotorNuestor PRIVATE SDL3::SDL3 glad::glad glm::glm DevIL::IL DevIL::ILU assimp::assimp)
