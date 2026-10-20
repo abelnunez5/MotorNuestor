@@ -4,6 +4,19 @@
 #include <assimp/scene.h>    
 #include <assimp/postprocess.h>
 
+struct Mesh {
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+    //  std::vector<unsigned int> colores;
+    unsigned int idVertex;
+    unsigned int idIndices;
+    //unsigned int idColores;
+
+    void CreateVertexBuffer();
+    void Draw() const;
+
+};
+
 namespace FBXLoader {
     struct FBX {
         unsigned int id_index = 0;
@@ -15,7 +28,7 @@ namespace FBXLoader {
         float* vertex = nullptr;
     };
 
-    void LoadFBX();
+    void LoadFBX(const char* path, std::vector<Mesh>& mesh);
 
     void Init();
     void CleanUp();

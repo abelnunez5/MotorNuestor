@@ -5,6 +5,42 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <IL/il.h>
+#include "FBXLoader.h"
+
+
+#ifdef _DEBUG
+static void __stdcall OpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	const char* tmp_source = "", * tmp_type = "", * tmp_severity = "";
+	switch (source) {
+	case GL_DEBUG_SOURCE_API: tmp_source = "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: tmp_source = "Window System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: tmp_source = "Shader Compiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY: tmp_source = "Third Party"; break;
+	case GL_DEBUG_SOURCE_APPLICATION: tmp_source = "Application"; break;
+	case GL_DEBUG_SOURCE_OTHER: tmp_source = "Other"; break;
+	};
+	switch (type) {
+	case GL_DEBUG_TYPE_ERROR: tmp_type = "Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: tmp_type = "Deprecated Behaviour"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: tmp_type = "Undefined Behaviour"; break;
+	case GL_DEBUG_TYPE_PORTABILITY: tmp_type = "Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE: tmp_type = "Performance"; break;
+	case GL_DEBUG_TYPE_MARKER: tmp_type = "Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP: tmp_type = "Push Group"; break;
+	case GL_DEBUG_TYPE_POP_GROUP: tmp_type = "Pop Group"; break;
+	case GL_DEBUG_TYPE_OTHER: tmp_type = "Other"; break;
+	};
+	switch (severity) {
+	case GL_DEBUG_SEVERITY_HIGH: tmp_severity = "high"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM: tmp_severity = "medium"; break;
+	case GL_DEBUG_SEVERITY_LOW: tmp_severity = "low"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
+	};
+	if (severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM)
+		SDL_Log("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
+}
+#endif // _DEBUG
 
 struct Vertex {
 	glm::vec3 position;
@@ -16,8 +52,8 @@ int main(int argc, char* argv[]) {
 		return -1;
 
 	//Opengl attributes required to know before we create the window
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // desired version
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer (it is the default)
@@ -49,6 +85,14 @@ int main(int argc, char* argv[]) {
 
 	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)) == 0)
 		return -1;
+
+#ifdef _DEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(OpenGLErrorFunction, nullptr);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, false);
+#endif // _DEBUG
 
 	glViewport(0, 0, wWidth, wHeight);
 	glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
@@ -104,7 +148,7 @@ int main(int argc, char* argv[]) {
 
 	float angleDegrees = 0.0f;
 	Uint64 lastTicks = SDL_GetTicks();
-
+	std::vector <Mesh> myMeshes;
 	bool running = true;
 	while (running)
 	{
@@ -120,8 +164,15 @@ int main(int argc, char* argv[]) {
 				if (wHeight == 0) wHeight = 1;
 				glViewport(0, 0, wWidth, wHeight);
 			}
+
+			else if (e.type == SDL_EVENT_DROP_FILE) {
+				
+				FBXLoader::LoadFBX(e.drop.data, myMeshes);
+				
+			}
 		}
 
+		SDL_GL_SetSwapInterval(1);
 		Uint64 currentTicks = SDL_GetTicks();
 		float deltaTime = (currentTicks - lastTicks) / 1000.0f;
 		lastTicks = currentTicks;
@@ -140,22 +191,27 @@ int main(int argc, char* argv[]) {
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glm::value_ptr(projection));
-
+		
 		glm::mat4 modelView = view * model;
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glm::value_ptr(modelView));
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, qVBuff);
-		glVertexPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
-		glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, color)));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuff);
-		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, NULL);
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
+		
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glEnableClientState(GL_VERTEX_ARRAY);
+		//glEnableClientState(GL_COLOR_ARRAY);
+		//glBindBuffer(GL_ARRAY_BUFFER, qVBuff);
+		//glVertexPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
+		//glColorPointer(3, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, color)));
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuff);
+		//glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, NULL);
+		//
+		//glDisableClientState(GL_VERTEX_ARRAY);
+		//glDisableClientState(GL_COLOR_ARRAY);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		for (const Mesh& mesh : myMeshes)
+		{
+			mesh.Draw();
+		}
 
 		SDL_GL_SwapWindow(wdn);
 	}

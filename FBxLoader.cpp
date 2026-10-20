@@ -3,6 +3,43 @@
 #include <assimp/cimport.h>    
 #include <assimp/scene.h>    
 #include <assimp/postprocess.h>
+#include <SDL3/SDL_events.h>
+#include "FBXLoader.h"
+
+
+void Mesh::CreateVertexBuffer()
+{
+    glGenBuffers(1, &idVertex);
+    glBindBuffer(GL_ARRAY_BUFFER, idVertex);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+
+    glGenBuffers(1, &idIndices);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    //glGenBuffers(1, &idColores);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idColores);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, colores.size() * sizeof(unsigned int), colores.data(), GL_STATIC_DRAW);
+
+}
+
+void Mesh::Draw() const {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    //glEnableClientState(GL_COLOR_ARRAY);
+
+    glBindBuffer(GL_ARRAY_BUFFER, idVertex);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idColores);
+
+    glVertexPointer(3, GL_FLOAT, sizeof(float) * 6, NULL);
+    glNormalPointer(GL_FLOAT, sizeof(float) * 6, reinterpret_cast<void*>(sizeof(float) * 3));
+    //glColorPointer(GL_FLOAT, );
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+}
+
 
 namespace FBXLoader {
 
@@ -11,40 +48,6 @@ namespace FBXLoader {
         stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
         aiAttachLogStream(&stream);
     }
-
-    struct Mesh {
-        std::vector<float> vertices;
-        std::vector<unsigned int> indices;
-        unsigned int idVertex;
-        unsigned int idIndices;
-
-        void CreateVertexBuffer()
-        {
-            glGenBuffers(1, &idVertex);
-            glBindBuffer(GL_ARRAY_BUFFER, idVertex);
-            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-
-            glGenBuffers(1, &idIndices);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-        }
-
-        void Draw() {
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glEnableClientState(GL_NORMAL_ARRAY);
-
-            glBindBuffer(GL_ARRAY_BUFFER, idVertex);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
-
-            glVertexPointer(3, GL_FLOAT, sizeof(float) * 6, NULL);
-            glNormalPointer(GL_FLOAT, sizeof(float) * 6, reinterpret_cast<void*>(sizeof(float) * 3));
-
-            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
-        }
-
-    };
 
     void LoadFBX(const char* path, std::vector<Mesh>& mesh) {
         const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
@@ -76,9 +79,11 @@ namespace FBXLoader {
                 }
 
                 myMesh.indices.reserve(aimesh.mNumFaces * 3);
+                //if (!aimesh.HasFaces())
+                //    return;
                 for (int i = 0; i < aimesh.mNumFaces; i++)
                 {
-                    if (aimesh.mFaces->mIndices = !3)
+                    if (aimesh.mFaces->mNumIndices = !3)
                     {
                         break;
                     }
@@ -88,7 +93,7 @@ namespace FBXLoader {
                     myMesh.indices.push_back(aimesh.mFaces[i].mIndices[2]);
                 }
 
-
+                myMesh.CreateVertexBuffer();
             }
 
             aiReleaseImport(scene);
