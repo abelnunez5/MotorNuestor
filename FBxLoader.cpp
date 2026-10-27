@@ -30,14 +30,14 @@ void Mesh::Draw() const {
     //glEnableClientState(GL_COLOR_ARRAY);
 
     glBindBuffer(GL_ARRAY_BUFFER, idVertex);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idColores);
 
     glVertexPointer(3, GL_FLOAT, sizeof(float) * 6, NULL);
     glNormalPointer(GL_FLOAT, sizeof(float) * 6, reinterpret_cast<void*>(sizeof(float) * 3));
     //glColorPointer(GL_FLOAT, );
 
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndices);
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
 }
 
 

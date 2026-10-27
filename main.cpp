@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 		return -1;
 
 	//Opengl attributes required to know before we create the window
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // desired version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer (it is the default)
@@ -96,7 +96,6 @@ int main(int argc, char* argv[]) {
 
 	glViewport(0, 0, wWidth, wHeight);
 	glClearColor(0.1f, 0.25f, 0.5f, 1.0f);
-
 	glEnable(GL_DEPTH_TEST);
 
 	Vertex cubeVertices[] = {
@@ -142,10 +141,11 @@ int main(int argc, char* argv[]) {
 	glm::vec3 cubeScale = glm::vec3(1.0f, 1.0f, 1.0f);
 	glm::vec3 rotationAxis = glm::vec3(0.5f, 1.0f, 0.0f);
 
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	SDL_GL_SetSwapInterval(1);
 	float angleDegrees = 0.0f;
 	Uint64 lastTicks = SDL_GetTicks();
 	std::vector <Mesh> myMeshes;
@@ -172,7 +172,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-		SDL_GL_SetSwapInterval(1);
 		Uint64 currentTicks = SDL_GetTicks();
 		float deltaTime = (currentTicks - lastTicks) / 1000.0f;
 		lastTicks = currentTicks;
@@ -187,14 +186,14 @@ int main(int argc, char* argv[]) {
 		glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 
 		float aspectRatio = static_cast<float>(wWidth) / static_cast<float>(wHeight);
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(projection));
-		
-		glm::mat4 modelView = view * model;
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(modelView));
+		//glMatrixMode(GL_PROJECTION);
+		//glLoadMatrixf(glm::value_ptr(projection));
+		//
+		//glm::mat4 modelView = view * model;
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadMatrixf(glm::value_ptr(modelView));
 		
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glEnableClientState(GL_VERTEX_ARRAY);
@@ -207,6 +206,14 @@ int main(int argc, char* argv[]) {
 		//
 		//glDisableClientState(GL_VERTEX_ARRAY);
 		//glDisableClientState(GL_COLOR_ARRAY);
+
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(projection));
+
+		glm::mat4 modelView = view;
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(modelView));
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		for (const Mesh& mesh : myMeshes)
 		{
