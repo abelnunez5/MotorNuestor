@@ -4,6 +4,10 @@
     "glad",
     "glm",
     "sdl3",
-    "assimp"
+    "assimp",
+    {
+      "name": "imgui",
+      "features": ["sdl3-binding", "opengl3-binding", "docking-experimental"]
+    }
   ]
 }

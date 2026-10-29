@@ -2,10 +2,13 @@
 
 #include "Core/Application.h"
 #include "Core/Log.h"
+#include "Editor.h"
 
 int main(int /*argc*/, char* /*argv*/[])
 {
     Application app;
+
+    app.AddModule<Editor>();
 
     if (!app.Init()) {
         LOG_ERROR("Application failed to initialize");

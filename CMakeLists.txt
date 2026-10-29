@@ -11,6 +11,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(DevIL REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Engine/*.cpp
@@ -28,8 +29,18 @@ target_compile_options(Engine PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src/Engine FILES ${ENGINE_SOURCES})
 
+file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor/*.h)
+
+add_library(Editor STATIC ${EDITOR_SOURCES})
+target_include_directories(Editor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor)
+target_link_libraries(Editor PUBLIC Engine imgui::imgui)
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor FILES ${EDITOR_SOURCES})
+
 add_executable(MotorNuestor src/main.cpp)
-target_link_libraries(MotorNuestor PRIVATE Engine)
+target_link_libraries(MotorNuestor PRIVATE Engine Editor)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MotorNuestor)
 set_target_properties(MotorNuestor PROPERTIES
