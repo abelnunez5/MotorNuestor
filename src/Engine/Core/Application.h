@@ -8,6 +8,8 @@
 
 class ModuleWindow;
 class ModuleInput;
+class ModuleRenderer;  
+class ModuleScene;
 
 class Application {
 public:
@@ -34,16 +36,20 @@ public:
     void CleanUp();
 
     void RequestQuit() { quitRequested = true; }
-
+    
     ModuleWindow& GetWindow() const { return *window; }
     ModuleInput& GetInput() const { return *input; }
+    ModuleRenderer& GetRenderer() const { return *renderer; } 
+    ModuleScene& GetScene() const { return *scene; }
 
 private:
-    UpdateStatus RunPhase(UpdateStatus (Module::*phase)());
+    UpdateStatus RunPhase(UpdateStatus(Module::* phase)());
 
     std::vector<std::unique_ptr<Module>> modules;
     ModuleWindow* window = nullptr;
     ModuleInput* input = nullptr;
+    ModuleRenderer* renderer = nullptr; 
+    ModuleScene* scene = nullptr;
 
     bool quitRequested = false;
     bool cleanedUp = false;

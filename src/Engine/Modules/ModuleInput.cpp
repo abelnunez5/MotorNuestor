@@ -1,9 +1,12 @@
 #include "Modules/ModuleInput.h"
 
 #include <algorithm>
+#include <filesystem>
+#include <cctype>
 
 #include "Core/Application.h"
 #include "Core/Log.h"
+#include "Modules/ModuleScene.h"
 
 namespace {
 
@@ -35,12 +38,18 @@ UpdateStatus ModuleInput::PreUpdate()
         case SDL_EVENT_MOUSE_WHEEL:
             mouseWheel += event.wheel.y;
             break;
-        case SDL_EVENT_DROP_FILE:
-            if (event.drop.data) {
-                droppedFiles.emplace_back(event.drop.data);
-                LOG("File dropped: %s", event.drop.data);
-            }
+        case SDL_EVENT_DROP_FILE: {
+            const std::filesystem::path path = event.drop.data;
+            std::string ext = path.extension().string();
+            std::transform(ext.begin(), ext.end(), ext.begin(),
+                [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+            if (ext == ".fbx")
+                app.GetScene().LoadModel(path.string());
+            else
+                LOG_WARNING("Unsupported dropped file: %s", path.string().c_str());
             break;
+        }
         default:
             break;
         }

@@ -6,12 +6,16 @@
 #include "Core/Time.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
+#include "Modules/ModuleRenderer.h"
+#include "Modules/ModuleScene.h"
 
 Application::Application()
 {
     // Window must be first: it creates the SDL video system and the GL context.
     window = &AddModule<ModuleWindow>();
     input = &AddModule<ModuleInput>();
+    renderer = &AddModule<ModuleRenderer>();
+    scene = &AddModule<ModuleScene>();
 }
 
 Application::~Application()
