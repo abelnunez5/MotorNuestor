@@ -11,7 +11,10 @@ namespace {
 
     void AssimpLogCallback(const char* message, char* /*user*/)
     {
-        LOG("Assimp: %s", message);
+        std::string text = message;
+        while (!text.empty() && (text.back() == '\n' || text.back() == '\r'))
+            text.pop_back();
+        LOG("Assimp: %s", text.c_str());
     }
 }
 
@@ -26,6 +29,9 @@ namespace FBXLoader {
 
     void Init()
     {
+        logStream.callback = AssimpLogCallback; 
+        logStream.user = nullptr;
+
         logStream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
         aiAttachLogStream(&logStream);
     }
