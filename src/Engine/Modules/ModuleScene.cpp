@@ -82,7 +82,7 @@ bool ModuleScene::LoadModel(const std::string& path)
     if (loaded.empty())
         return false;
 
-    const bool firstModel = meshes.empty();
+   
     for (Mesh& mesh : loaded) {
         bounds.Expand(mesh.GetBounds());
 
@@ -98,8 +98,7 @@ bool ModuleScene::LoadModel(const std::string& path)
         meshes.push_back(std::move(mesh));
     }
 
-    if (firstModel)
-        selected = 0;   // Temporal, quitar cuando la jerarquía permita seleccionar
+
 
     app.GetCamera().FocusOn(bounds);
     return true;
