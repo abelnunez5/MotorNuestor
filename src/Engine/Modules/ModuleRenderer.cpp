@@ -1,9 +1,13 @@
 #include <glad/glad.h>
 #include "Modules/ModuleRenderer.h"
+
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleWindow.h"
+#include "Modules/ModuleCamera.h"
 #include "Core/Application.h"
-#include <cmath>
+
 
 bool ModuleRenderer::Init()
 {
@@ -24,21 +28,67 @@ UpdateStatus ModuleRenderer::PreUpdate()
 
 UpdateStatus ModuleRenderer::PostUpdate()
 {
-    // PROVISIONAL: sustituir por view/projection de la cámara cuando exista.
-    const ModuleWindow& window = app.GetWindow();
-    const float aspect = static_cast<float>(window.Width()) / static_cast<float>(window.Height());
-    const float nearPlane = 0.1f, farPlane = 1000.0f;
-    const float top = nearPlane * std::tan(60.0f * 0.5f * 3.14159265f / 180.0f);
+    if (!sceneBuffer.IsValid())
+        return UpdateStatus::Continue;
+
+    const float aspect = static_cast<float>(sceneBuffer.Width()) / static_cast<float>(sceneBuffer.Height());
+    const ModuleCamera& camera = app.GetCamera();
+
+    sceneBuffer.Bind();
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustum(-top * aspect, top * aspect, -top, top, nearPlane, farPlane);
+    glLoadMatrixf(glm::value_ptr(camera.ProjectionMatrix(aspect)));
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0.0f, -1.0f, -6.0f); // aleja la cámara; ajusta según la escala del modelo
+    glLoadMatrixf(glm::value_ptr(camera.ViewMatrix()));
+
+    DrawGrid();
 
     for (const Mesh& mesh : app.GetScene().GetMeshes())
         mesh.Draw();
 
+    sceneBuffer.Unbind();
+
+    const ModuleWindow& window = app.GetWindow();
+    glViewport(0, 0, window.Width(), window.Height());
+
     return UpdateStatus::Continue;
+}
+
+void ModuleRenderer::CleanUp()
+{
+	sceneBuffer.Release();
+}
+
+void ModuleRenderer::DrawGrid() const
+{
+    constexpr int kHalfSize = 50;
+    constexpr float kExtent = static_cast<float>(kHalfSize);
+
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+
+    glColor3f(0.35f, 0.35f, 0.35f);
+    for (int i = -kHalfSize; i <= kHalfSize; ++i) {
+        if (i == 0)
+            continue;
+        const float offset = static_cast<float>(i);
+        glVertex3f(offset, 0.0f, -kExtent);
+        glVertex3f(offset, 0.0f, kExtent);
+        glVertex3f(-kExtent, 0.0f, offset);
+        glVertex3f(kExtent, 0.0f, offset);
+    }
+
+    // World axes --> X red, Z blue
+    glColor3f(0.8f, 0.2f, 0.2f);
+    glVertex3f(-kExtent, 0.0f, 0.0f);
+    glVertex3f(kExtent, 0.0f, 0.0f);
+    glColor3f(0.2f, 0.4f, 0.9f);
+    glVertex3f(0.0f, 0.0f, -kExtent);
+    glVertex3f(0.0f, 0.0f, kExtent);
+
+    glEnd();
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_LIGHTING);
 }

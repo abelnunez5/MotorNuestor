@@ -44,6 +44,13 @@ void Mesh::Upload()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void Mesh::ComputeBounds()
+{
+    bounds = AABB{};
+    for (const Vertex& v : vertices)
+        bounds.Expand(glm::vec3(v.position[0], v.position[1], v.position[2]));
+}
+
 void Mesh::Release()
 {
     if (vbo) glDeleteBuffers(1, &vbo);

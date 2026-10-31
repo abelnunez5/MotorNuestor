@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include "Math/AABB.h"
+
 class Mesh {
 public:
     struct Vertex {
@@ -24,13 +26,17 @@ public:
     const std::vector<Vertex>& GetVertices() const { return vertices; }
     const std::vector<unsigned int>& GetIndices() const { return indices; }
 
+	const AABB& GetBounds() const { return bounds; }
+
 private:
     void Upload();
     void Release();
+	void ComputeBounds();
 
     std::string name;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     unsigned int vbo = 0;
     unsigned int ebo = 0;
+	AABB bounds;
 };

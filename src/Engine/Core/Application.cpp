@@ -4,6 +4,7 @@
 
 #include "Core/Log.h"
 #include "Core/Time.h"
+#include "Modules/ModuleCamera.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRenderer.h"
@@ -15,6 +16,7 @@ Application::Application()
     window = &AddModule<ModuleWindow>();
     input = &AddModule<ModuleInput>();
     renderer = &AddModule<ModuleRenderer>();
+    camera = &AddModule<ModuleCamera>();
     scene = &AddModule<ModuleScene>();
 }
 

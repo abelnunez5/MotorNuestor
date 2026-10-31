@@ -11,6 +11,7 @@
 #include "Modules/ModuleWindow.h"
 #include "PanelAbout.h"
 #include "PanelConsole.h"
+#include "PanelScene.h"
 
 bool Editor::Init()
 {
@@ -45,6 +46,7 @@ bool Editor::Init()
         ImGui_ImplSDL3_ProcessEvent(&event);
     });
 
+    panels.push_back(std::make_unique<PanelScene>(app));
     panels.push_back(std::make_unique<PanelConsole>());
 
     auto about = std::make_unique<PanelAbout>();

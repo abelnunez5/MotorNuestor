@@ -8,7 +8,8 @@
 
 class ModuleWindow;
 class ModuleInput;
-class ModuleRenderer;  
+class ModuleRenderer;
+class ModuleCamera;
 class ModuleScene;
 
 class Application {
@@ -36,10 +37,11 @@ public:
     void CleanUp();
 
     void RequestQuit() { quitRequested = true; }
-    
+
     ModuleWindow& GetWindow() const { return *window; }
     ModuleInput& GetInput() const { return *input; }
-    ModuleRenderer& GetRenderer() const { return *renderer; } 
+    ModuleRenderer& GetRenderer() const { return *renderer; }
+    ModuleCamera& GetCamera() const { return *camera; }
     ModuleScene& GetScene() const { return *scene; }
 
 private:
@@ -48,7 +50,8 @@ private:
     std::vector<std::unique_ptr<Module>> modules;
     ModuleWindow* window = nullptr;
     ModuleInput* input = nullptr;
-    ModuleRenderer* renderer = nullptr; 
+    ModuleRenderer* renderer = nullptr;
+    ModuleCamera* camera = nullptr;
     ModuleScene* scene = nullptr;
 
     bool quitRequested = false;
