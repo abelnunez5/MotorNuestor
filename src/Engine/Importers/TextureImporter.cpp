@@ -11,6 +11,7 @@
 
 namespace {
     std::unordered_map<std::string, std::weak_ptr<Texture>> cache;
+    std::unique_ptr<Texture> checker;
 
     unsigned int Upload(const unsigned char* pixels, int w, int h)
     {
@@ -40,6 +41,7 @@ void TextureImporter::Init()
 void TextureImporter::CleanUp()
 {
     cache.clear();
+    checker.reset();
     ilShutDown();
 }
 
@@ -78,16 +80,20 @@ std::shared_ptr<Texture> TextureImporter::Load(const std::string& path)
     return texture;
 }
 
-std::shared_ptr<Texture> TextureImporter::CreateChecker(int size)
+const Texture& TextureImporter::GetChecker()
 {
-    std::vector<unsigned char> pixels(static_cast<size_t>(size) * size * 4);
-    for (int i = 0; i < size; ++i) {
-        for (int j = 0; j < size; ++j) {
-            const unsigned char c = (((i & 0x8) == 0) ^ ((j & 0x8) == 0)) * 255;
-            unsigned char* p = &pixels[(static_cast<size_t>(i) * size + j) * 4];
-            p[0] = p[1] = p[2] = c;
-            p[3] = 255;
+    if (!checker) {
+        constexpr int size = 64;
+        std::vector<unsigned char> pixels(size * size * 4);
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                const unsigned char c = (((i & 0x8) == 0) ^ ((j & 0x8) == 0)) * 255;
+                unsigned char* p = &pixels[(i * size + j) * 4];
+                p[0] = p[1] = p[2] = c;
+                p[3] = 255;
+            }
         }
+        checker = std::make_unique<Texture>(Upload(pixels.data(), size, size), size, size, "[checker]");
     }
-    return std::make_shared<Texture>(Upload(pixels.data(), size, size), size, size, "[checker]");
+    return *checker;
 }

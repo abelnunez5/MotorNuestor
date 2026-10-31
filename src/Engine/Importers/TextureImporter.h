@@ -9,6 +9,6 @@ namespace TextureImporter {
 
     // Devuelve la textura cacheada si ya estaba cargada (DDS, PNG, ...)
     std::shared_ptr<Texture> Load(const std::string& path);
-    std::shared_ptr<Texture> CreateChecker(int size = 64);
+    const Texture& GetChecker();
 }
 

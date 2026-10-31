@@ -8,13 +8,15 @@ Mesh::Mesh(std::string name, std::vector<Vertex> vertices, std::vector<unsigned 
     : name(std::move(name)), vertices(std::move(vertices)), indices(std::move(indices))
 {
     Upload();
+    ComputeBounds();
 }
 
 Mesh::~Mesh() { Release(); }
 
 Mesh::Mesh(Mesh&& o) noexcept
     : name(std::move(o.name)), vertices(std::move(o.vertices)), indices(std::move(o.indices)),
-    vbo(std::exchange(o.vbo, 0)), ebo(std::exchange(o.ebo, 0)) {
+    vbo(std::exchange(o.vbo, 0)), ebo(std::exchange(o.ebo, 0)),
+    bounds(o.bounds), texturePath(std::move(o.texturePath)) {
 }
 
 Mesh& Mesh::operator=(Mesh&& o) noexcept
@@ -26,6 +28,8 @@ Mesh& Mesh::operator=(Mesh&& o) noexcept
         indices = std::move(o.indices);
         vbo = std::exchange(o.vbo, 0);
         ebo = std::exchange(o.ebo, 0);
+        bounds = o.bounds;
+        texturePath = std::move(o.texturePath);
     }
     return *this;
 }
