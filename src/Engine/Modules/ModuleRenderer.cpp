@@ -45,8 +45,14 @@ UpdateStatus ModuleRenderer::PostUpdate()
 
     DrawGrid();
 
-    for (const Mesh& mesh : app.GetScene().GetMeshes())
-        mesh.Draw();
+    const ModuleScene& scene = app.GetScene();
+    const std::vector<Mesh>& meshes = scene.GetMeshes();
+    const std::vector<TextureComponent>& textures = scene.GetTextures();
+    for (size_t i = 0; i < meshes.size(); ++i) {
+        textures[i].Bind();
+        meshes[i].Draw();
+        TextureComponent::Unbind();
+    }
 
     sceneBuffer.Unbind();
 

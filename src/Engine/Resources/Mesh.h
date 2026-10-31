@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "Resources/Texture.h"
 
 #include "Math/AABB.h"
 
@@ -28,6 +29,9 @@ public:
 
 	const AABB& GetBounds() const { return bounds; }
 
+    void SetTexturePath(std::string path) { texturePath = std::move(path); }
+    const std::string& GetTexturePath() const { return texturePath; }
+
 private:
     void Upload();
     void Release();
@@ -39,4 +43,5 @@ private:
     unsigned int vbo = 0;
     unsigned int ebo = 0;
 	AABB bounds;
+    std::string texturePath;
 };
