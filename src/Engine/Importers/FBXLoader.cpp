@@ -88,6 +88,12 @@ namespace FBXLoader {
 
             LOG("Mesh '%s': %u vertices, %zu indices", src.mName.C_Str(), src.mNumVertices, indices.size());
             meshes.emplace_back(src.mName.C_Str(), std::move(vertices), std::move(indices));
+
+            if (src.mMaterialIndex < scene->mNumMaterials) {
+                aiString texturePath;
+                if (scene->mMaterials[src.mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS)
+                    meshes.back().SetTexturePath(texturePath.C_Str());
+            }
         }
 
         aiReleaseImport(scene);
