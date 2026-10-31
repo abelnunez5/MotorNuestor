@@ -7,7 +7,34 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
 #include "Core/Application.h"
+#include "Scene/GameObject.h"
+#include "Scene/MeshComponent.h"
+#include "Scene/TextureComponent.h"
+#include "Scene/Transform.h"
 
+namespace {
+    // El transform local de cada nodo se apila sobre el del padre
+    void DrawGameObject(const GameObject& gameObject)
+    {
+        const glm::mat4 local = gameObject.GetTransform().LocalMatrix();
+        glPushMatrix();
+        glMultMatrixf(glm::value_ptr(local));
+
+        if (const MeshComponent* mesh = gameObject.GetComponent<MeshComponent>()) {
+            const TextureComponent* texture = gameObject.GetComponent<TextureComponent>();
+            if (texture)
+                texture->Bind();
+            mesh->GetMesh().Draw();
+            if (texture)
+                TextureComponent::Unbind();
+        }
+
+        for (const auto& child : gameObject.GetChildren())
+            DrawGameObject(*child);
+
+        glPopMatrix();
+    }
+}
 
 bool ModuleRenderer::Init()
 {
@@ -44,15 +71,7 @@ UpdateStatus ModuleRenderer::PostUpdate()
     glLoadMatrixf(glm::value_ptr(camera.ViewMatrix()));
 
     DrawGrid();
-
-    const ModuleScene& scene = app.GetScene();
-    const std::vector<Mesh>& meshes = scene.GetMeshes();
-    const std::vector<TextureComponent>& textures = scene.GetTextures();
-    for (size_t i = 0; i < meshes.size(); ++i) {
-        textures[i].Bind();
-        meshes[i].Draw();
-        TextureComponent::Unbind();
-    }
+    DrawGameObject(app.GetScene().GetRoot());
 
     sceneBuffer.Unbind();
 
@@ -64,7 +83,7 @@ UpdateStatus ModuleRenderer::PostUpdate()
 
 void ModuleRenderer::CleanUp()
 {
-	sceneBuffer.Release();
+    sceneBuffer.Release();
 }
 
 void ModuleRenderer::DrawGrid() const

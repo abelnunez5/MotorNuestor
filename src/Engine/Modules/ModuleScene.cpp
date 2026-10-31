@@ -5,12 +5,17 @@
 #include <filesystem>
 #include <memory>
 
+#include <glm/glm.hpp>
+
 #include "Importers/FBXLoader.h"
 #include "Importers/TextureImporter.h"
 #include "Core/Log.h"
 #include "Core/Application.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleInput.h"
+#include "Scene/MeshComponent.h"
+#include "Scene/TextureComponent.h"
+#include "Scene/Transform.h"
 
 namespace {
     bool HasExtension(const std::string& path, const std::string& extension)
@@ -25,7 +30,7 @@ namespace {
         return HasExtension(path, ".png") || HasExtension(path, ".dds");
     }
 
-    
+    // Las rutas de los FBX suelen venir rotas (absolutas de la máquina del artista), así que probamos varias.
     std::string ResolveTexturePath(const std::string& texturePath, const std::string& modelPath)
     {
         namespace fs = std::filesystem;
@@ -43,6 +48,26 @@ namespace {
                 return candidate.string();
         }
         return {};
+    }
+
+    // Bounds en mundo de un GameObject y todos sus descendientes
+    void ExpandBounds(const GameObject& gameObject, AABB& bounds)
+    {
+        if (const MeshComponent* meshComponent = gameObject.GetComponent<MeshComponent>()) {
+            const glm::mat4 world = gameObject.GetTransform().WorldMatrix();
+            for (const Mesh::Vertex& vertex : meshComponent->GetMesh().GetVertices())
+                bounds.Expand(glm::vec3(world * glm::vec4(vertex.position[0], vertex.position[1], vertex.position[2], 1.0f)));
+        }
+        for (const auto& child : gameObject.GetChildren())
+            ExpandBounds(*child, bounds);
+    }
+
+    void ApplyTextureRecursive(GameObject& gameObject, const std::shared_ptr<Texture>& texture)
+    {
+        if (TextureComponent* component = gameObject.GetComponent<TextureComponent>())
+            component->SetTexture(texture);
+        for (const auto& child : gameObject.GetChildren())
+            ApplyTextureRecursive(*child, texture);
     }
 }
 
@@ -70,8 +95,9 @@ UpdateStatus ModuleScene::Update()
 
 void ModuleScene::CleanUp()
 {
- 
-    textures.clear();
+    // Hay que liberar los buffers y texturas antes de que ModuleWindow destruya el contexto GL.
+    selected = nullptr;
+    root.reset();
     TextureImporter::CleanUp();
     FBXLoader::CleanUp();
 }
@@ -82,11 +108,12 @@ bool ModuleScene::LoadModel(const std::string& path)
     if (loaded.empty())
         return false;
 
-   
-    for (Mesh& mesh : loaded) {
-        bounds.Expand(mesh.GetBounds());
+    GameObject& model = root->AddChild(std::filesystem::u8path(path).stem().u8string());
 
-        TextureComponent texture;
+    for (Mesh& mesh : loaded) {
+        GameObject& child = model.AddChild(mesh.GetName());
+
+        TextureComponent& texture = child.AddComponent<TextureComponent>();
         if (!mesh.GetTexturePath().empty()) {
             const std::string resolved = ResolveTexturePath(mesh.GetTexturePath(), path);
             if (!resolved.empty())
@@ -94,13 +121,16 @@ bool ModuleScene::LoadModel(const std::string& path)
             else
                 LOG_WARNING("Texture '%s' of mesh '%s' not found", mesh.GetTexturePath().c_str(), mesh.GetName().c_str());
         }
-        textures.push_back(std::move(texture));
-        meshes.push_back(std::move(mesh));
+
+        child.AddComponent<MeshComponent>(std::move(mesh));
     }
 
+    selected = &model;
 
-
-    app.GetCamera().FocusOn(bounds);
+    AABB modelBounds;
+    ExpandBounds(model, modelBounds);
+    if (modelBounds.IsValid())
+        app.GetCamera().FocusOn(modelBounds);
     return true;
 }
 
@@ -110,17 +140,12 @@ void ModuleScene::ApplyTexture(const std::string& path)
     if (!texture)
         return;
 
-    if (selected >= 0 && static_cast<size_t>(selected) < textures.size()) {
-        textures[selected].SetTexture(std::move(texture));
-    }
-    else {
-        for (TextureComponent& component : textures)
-            component.SetTexture(texture);
-    }
+    ApplyTextureRecursive(selected ? *selected : *root, texture);
 }
 
 bool ModuleScene::GetBounds(AABB& out) const
 {
-    out = bounds;
-    return bounds.IsValid();
+    out = AABB{};
+    ExpandBounds(selected ? *selected : *root, out);
+    return out.IsValid();
 }

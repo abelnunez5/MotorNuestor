@@ -1,10 +1,9 @@
 #pragma once
+#include <memory>
 #include <string>
-#include <vector>
 #include "Core/Module.h"
 #include "Math/AABB.h"
-#include "Resources/Mesh.h"
-#include "Scene/TextureComponent.h"
+#include "Scene/GameObject.h"
 
 class ModuleScene : public Module {
 public:
@@ -15,23 +14,21 @@ public:
     void CleanUp() override;
 
     bool LoadModel(const std::string& path);
-    const std::vector<Mesh>& GetMeshes() const { return meshes; }
 
-    // Temporal, cuando estén los GameObjects, estos tres bloques se mueven dentro de ellos
-    const std::vector<TextureComponent>& GetTextures() const { return textures; }
-    TextureComponent& GetTexture(size_t index) { return textures[index]; }
-    int GetSelected() const { return selected; }          // -1 = ninguno
-    void Select(int index) { selected = index; }
+    GameObject& GetRoot() { return *root; }
+    const GameObject& GetRoot() const { return *root; }
 
-    
+    GameObject* GetSelected() const { return selected; }   // nullptr = ninguno
+    void Select(GameObject* gameObject) { selected = gameObject; }
+
+    // Aplica la textura al seleccionado (y sus hijos), o a toda la escena si no hay selección
     void ApplyTexture(const std::string& path);
 
-    // Temporal, cuando estén los GameObjects estos darán los bounds
+    // Bounds en mundo del GameObject seleccionado, o de toda la escena si no hay selección (lo usa la cámara)
     bool GetBounds(AABB& out) const;
 
 private:
-    std::vector<Mesh> meshes;
-    std::vector<TextureComponent> textures;
-    int selected = -1;
-    AABB bounds;
+    // Se crea aquí y no en Init() para que GetRoot() sea siempre válido
+    std::unique_ptr<GameObject> root = std::make_unique<GameObject>("Root");
+    GameObject* selected = nullptr;
 };

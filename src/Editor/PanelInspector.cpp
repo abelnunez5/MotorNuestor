@@ -2,23 +2,64 @@
 
 #include <cstdint>
 
+#include <glm/glm.hpp>
+
 #include "Core/Application.h"
 #include "Modules/ModuleScene.h"
+#include "Scene/GameObject.h"
+#include "Scene/MeshComponent.h"
+#include "Scene/TextureComponent.h"
+#include "Scene/Transform.h"
 
 void PanelInspector::DrawContent()
 {
-    ModuleScene& scene = app.GetScene();
-    const int selected = scene.GetSelected();
-    if (selected < 0 || static_cast<size_t>(selected) >= scene.GetMeshes().size()) {
+    GameObject* selected = app.GetScene().GetSelected();
+    if (!selected) {
         ImGui::TextDisabled("No object selected");
         return;
     }
 
-    ImGui::TextUnformatted(scene.GetMeshes()[selected].GetName().c_str());
+    ImGui::TextUnformatted(selected->GetName().c_str());
     ImGui::Separator();
 
-    // Temporal, falta Transform y Mesh
-    DrawTextureSection(scene.GetTexture(selected));
+    DrawTransformSection(selected->GetTransform());
+
+    if (const MeshComponent* meshComponent = selected->GetComponent<MeshComponent>())
+        DrawMeshSection(*meshComponent);
+
+    if (TextureComponent* textureComponent = selected->GetComponent<TextureComponent>())
+        DrawTextureSection(*textureComponent);
+}
+
+void PanelInspector::DrawTransformSection(Transform& transform)
+{
+    if (!ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        return;
+
+    glm::vec3 position = transform.GetPosition();
+    if (ImGui::DragFloat3("Position", &position.x, 0.05f))
+        transform.SetPosition(position);
+
+    glm::vec3 rotation = transform.GetRotation();
+    if (ImGui::DragFloat3("Rotation", &rotation.x, 0.5f))
+        transform.SetRotation(rotation);
+
+    glm::vec3 scale = transform.GetScale();
+    if (ImGui::DragFloat3("Scale", &scale.x, 0.01f))
+        transform.SetScale(scale);
+}
+
+void PanelInspector::DrawMeshSection(const MeshComponent& meshComponent)
+{
+    if (!ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
+        return;
+
+    const Mesh& mesh = meshComponent.GetMesh();
+    ImGui::Text("Name: %s", mesh.GetName().c_str());
+    ImGui::Text("Vertices: %zu", mesh.GetVertices().size());
+    ImGui::Text("Triangles: %zu", mesh.GetIndices().size() / 3);
+
+    // TODO (normales): checkboxes para visualizar normales por vértice y por triángulo
 }
 
 void PanelInspector::DrawTextureSection(TextureComponent& component)
@@ -39,11 +80,8 @@ void PanelInspector::DrawTextureSection(TextureComponent& component)
         component.SetShowChecker(checker);
 
     if (const Texture* preview = component.GetActive()) {
-        
+        // uv invertidas: la textura se guardó con origen abajo-izquierda
         ImGui::Image(static_cast<ImTextureID>(static_cast<std::intptr_t>(preview->Id())),
             ImVec2(128.0f, 128.0f), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
     }
-
-    // Temporal, (editor.cpp) registrar este panel en Editor.cpp y añadirlo al menú View (MainMenuBar).
-// Temporal, (GameObjects): añadir aquí las secciones Transform y Mesh (visualizar normales).
 }

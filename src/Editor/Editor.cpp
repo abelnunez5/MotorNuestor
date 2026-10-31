@@ -12,6 +12,8 @@
 #include "PanelAbout.h"
 #include "PanelConsole.h"
 #include "PanelScene.h"
+#include "PanelHierarchy.h"
+#include "PanelInspector.h"
 
 bool Editor::Init()
 {
@@ -48,6 +50,8 @@ bool Editor::Init()
 
     panels.push_back(std::make_unique<PanelScene>(app));
     panels.push_back(std::make_unique<PanelConsole>());
+    panels.push_back(std::make_unique<PanelHierarchy>(app));
+    panels.push_back(std::make_unique<PanelInspector>(app));
 
     auto about = std::make_unique<PanelAbout>();
     aboutPanel = about.get();

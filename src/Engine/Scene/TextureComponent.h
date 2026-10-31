@@ -2,9 +2,13 @@
 #include <memory>
 #include <utility>
 #include "Resources/Texture.h"
+#include "Scene/Component.h"
 
-class TextureComponent {   // TODO: derivar de Component cuando exista
+class TextureComponent : public Component {
 public:
+    static constexpr Type StaticType = Type::Texture;
+    explicit TextureComponent(GameObject& owner) : Component(owner, StaticType) {}
+
     void SetTexture(std::shared_ptr<Texture> newTexture) { texture = std::move(newTexture); }
     const std::shared_ptr<Texture>& GetTexture() const { return texture; }
 
