@@ -51,8 +51,7 @@ std::shared_ptr<Texture> TextureImporter::Load(const std::string& path)
         if (auto alive = it->second.lock())
             return alive;
 
-    // Leemos el fichero nosotros y se lo damos a DevIL desde memoria:
-    // evita líos de char/wchar_t en Windows y sirve igual para PNG y DDS.
+    // Leemos el fichero nosotros y se lo damos a DevIL desde memoria, evita líos de char/wchar_t en Windows y sirve igual para PNG y DDS.
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         LOG_WARNING("Texture not found: %s", path.c_str());
@@ -96,4 +95,13 @@ const Texture& TextureImporter::GetChecker()
         checker = std::make_unique<Texture>(Upload(pixels.data(), size, size), size, size, "[checker]");
     }
     return *checker;
+}
+
+std::vector<std::shared_ptr<Texture>> TextureImporter::GetLoaded()
+{
+    std::vector<std::shared_ptr<Texture>> loaded;
+    for (const auto& entry : cache)
+        if (std::shared_ptr<Texture> texture = entry.second.lock())
+            loaded.push_back(std::move(texture));
+    return loaded;
 }

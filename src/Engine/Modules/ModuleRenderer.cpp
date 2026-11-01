@@ -3,37 +3,50 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Core/Application.h"
+#include "Modules/ModuleCamera.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleWindow.h"
-#include "Modules/ModuleCamera.h"
-#include "Core/Application.h"
 #include "Scene/GameObject.h"
 #include "Scene/MeshComponent.h"
 #include "Scene/TextureComponent.h"
 #include "Scene/Transform.h"
 
 namespace {
+
+    void SetEnabled(GLenum capability, bool enabled)
+    {
+        if (enabled)
+            glEnable(capability);
+        else
+            glDisable(capability);
+    }
+
     // El transform local de cada nodo se apila sobre el del padre
-    void DrawGameObject(const GameObject& gameObject)
+    void DrawGameObject(const GameObject& gameObject, const ModuleRenderer::Settings& settings)
     {
         const glm::mat4 local = gameObject.GetTransform().LocalMatrix();
         glPushMatrix();
         glMultMatrixf(glm::value_ptr(local));
 
-        if (const MeshComponent* mesh = gameObject.GetComponent<MeshComponent>()) {
-            const TextureComponent* texture = gameObject.GetComponent<TextureComponent>();
+        if (const MeshComponent* meshComponent = gameObject.GetComponent<MeshComponent>()) {
+            const TextureComponent* texture = settings.textures ? gameObject.GetComponent<TextureComponent>() : nullptr;
             if (texture)
                 texture->Bind();
-            mesh->GetMesh().Draw();
+            meshComponent->GetMesh().Draw();
             if (texture)
                 TextureComponent::Unbind();
+
+            if (meshComponent->IsDrawingNormals())
+                meshComponent->DrawNormals();
         }
 
         for (const auto& child : gameObject.GetChildren())
-            DrawGameObject(*child);
+            DrawGameObject(*child, settings);
 
         glPopMatrix();
     }
+
 }
 
 bool ModuleRenderer::Init()
@@ -62,17 +75,27 @@ UpdateStatus ModuleRenderer::PostUpdate()
     const ModuleCamera& camera = app.GetCamera();
 
     sceneBuffer.Bind();
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(settings.clearColor[0], settings.clearColor[1], settings.clearColor[2], 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Options from the Configuration window
+    SetEnabled(GL_DEPTH_TEST, settings.depthTest);
+    SetEnabled(GL_CULL_FACE, settings.cullFace);
+    SetEnabled(GL_LIGHTING, settings.lighting);
+    glPolygonMode(GL_FRONT_AND_BACK, settings.wireframe ? GL_LINE : GL_FILL);
 
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(camera.ProjectionMatrix(aspect)));
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(glm::value_ptr(camera.ViewMatrix()));
 
-    DrawGrid();
-    DrawGameObject(app.GetScene().GetRoot());
+    if (settings.showGrid)
+        DrawGrid();
 
+    glColor3f(1.0f, 1.0f, 1.0f);
+    DrawGameObject(app.GetScene().GetRoot(), settings);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     sceneBuffer.Unbind();
 
     const ModuleWindow& window = app.GetWindow();
@@ -91,6 +114,7 @@ void ModuleRenderer::DrawGrid() const
     constexpr int kHalfSize = 50;
     constexpr float kExtent = static_cast<float>(kHalfSize);
 
+    const bool wasLit = glIsEnabled(GL_LIGHTING) == GL_TRUE;
     glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
 
@@ -115,5 +139,6 @@ void ModuleRenderer::DrawGrid() const
 
     glEnd();
     glColor3f(1.0f, 1.0f, 1.0f);
-    glEnable(GL_LIGHTING);
+    if (wasLit)
+        glEnable(GL_LIGHTING);
 }

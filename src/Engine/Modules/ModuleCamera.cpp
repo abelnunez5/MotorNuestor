@@ -59,7 +59,7 @@ UpdateStatus ModuleCamera::Update()
         if (viewportHovered) {
             UpdateZoom(input.MouseWheel());
             if (input.GetKey(SDL_SCANCODE_F) == KeyState::Down)
-                FocusOnScene();
+                FocusOnSelection();
         }
         break;
     }
@@ -177,8 +177,7 @@ void ModuleCamera::UpdateZoom(float wheel)
     distance = newDistance;
 }
 
-//Temporal, como aun no tenemos GameObjects, la F hace focus en todo lo cargado. Luego usaremos el bounds del GameObject 
-void ModuleCamera::FocusOnScene()
+void ModuleCamera::FocusOnSelection()
 {
     AABB bounds;
     if (app.GetScene().GetBounds(bounds))

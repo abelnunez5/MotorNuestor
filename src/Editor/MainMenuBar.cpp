@@ -7,6 +7,8 @@
 #include "Core/Application.h"
 #include "Core/EngineInfo.h"
 #include "Core/Log.h"
+#include "Modules/ModuleScene.h"
+#include "Resources/Primitives.h"
 
 namespace {
 
@@ -31,6 +33,16 @@ void MainMenuBar::Draw(Application& app, const std::vector<std::unique_ptr<Panel
     if (ImGui::BeginMenu("View")) {
         for (const auto& panel : panels)
             ImGui::MenuItem(panel->Name().c_str(), nullptr, &panel->Visible());
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("GameObject")) {
+        if (ImGui::BeginMenu("3D Object")) {
+            for (const Primitives::Type type : Primitives::kAll)
+                if (ImGui::MenuItem(Primitives::Name(type)))
+                    app.GetScene().CreatePrimitive(type);
+            ImGui::EndMenu();
+        }
         ImGui::EndMenu();
     }
 

@@ -18,21 +18,12 @@ namespace {
     }
 }
 
-void Init()
-{
-    logStream.callback = AssimpLogCallback;
-    logStream.user = nullptr;
-    aiAttachLogStream(&logStream);
-}
-
 namespace FBXLoader {
 
     void Init()
     {
-        logStream.callback = AssimpLogCallback; 
+        logStream.callback = AssimpLogCallback;
         logStream.user = nullptr;
-
-        logStream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
         aiAttachLogStream(&logStream);
     }
 
@@ -45,6 +36,8 @@ namespace FBXLoader {
         const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
         if (!scene || !scene->HasMeshes()) {
             LOG_ERROR("Error loading scene %s: %s", path.c_str(), aiGetErrorString());
+            if (scene)
+                aiReleaseImport(scene);
             return meshes;
         }
 

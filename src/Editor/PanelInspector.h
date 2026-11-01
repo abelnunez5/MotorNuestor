@@ -15,7 +15,7 @@ protected:
 
 private:
     void DrawTransformSection(Transform& transform);
-    void DrawMeshSection(const MeshComponent& meshComponent);
+    void DrawMeshSection(MeshComponent& meshComponent);
     void DrawTextureSection(TextureComponent& component);
 
     Application& app;

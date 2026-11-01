@@ -148,3 +148,44 @@ void ModuleWindow::SetVSync(bool enabled)
     else
         LOG_WARNING("Could not change vsync: %s", SDL_GetError());
 }
+
+bool ModuleWindow::IsFullscreen() const
+{
+    return (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) != 0;
+}
+
+void ModuleWindow::SetFullscreen(bool enabled)
+{
+    if (!SDL_SetWindowFullscreen(window, enabled))
+        LOG_WARNING("Could not change fullscreen: %s", SDL_GetError());
+}
+
+bool ModuleWindow::IsResizable() const
+{
+    return (SDL_GetWindowFlags(window) & SDL_WINDOW_RESIZABLE) != 0;
+}
+
+void ModuleWindow::SetResizable(bool enabled)
+{
+    SDL_SetWindowResizable(window, enabled);
+}
+
+bool ModuleWindow::IsBordered() const
+{
+    return (SDL_GetWindowFlags(window) & SDL_WINDOW_BORDERLESS) == 0;
+}
+
+void ModuleWindow::SetBordered(bool enabled)
+{
+    SDL_SetWindowBordered(window, enabled);
+}
+
+void ModuleWindow::GetSize(int& w, int& h) const
+{
+    SDL_GetWindowSize(window, &w, &h);
+}
+
+void ModuleWindow::SetSize(int w, int h)
+{
+    SDL_SetWindowSize(window, w, h);
+}

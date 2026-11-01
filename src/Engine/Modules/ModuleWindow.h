@@ -25,6 +25,17 @@ public:
     bool IsVSync() const { return vsync; }
     void SetVSync(bool enabled);
 
+    bool IsFullscreen() const;
+    void SetFullscreen(bool enabled);
+    bool IsResizable() const;
+    void SetResizable(bool enabled);
+    bool IsBordered() const;
+    void SetBordered(bool enabled);
+
+    // Size of the window in screen coordinates (not pixels).
+    void GetSize(int& w, int& h) const;
+    void SetSize(int w, int h);
+
 private:
     SDL_Window* window = nullptr;
     SDL_GLContext glContext = nullptr;

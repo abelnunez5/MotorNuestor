@@ -24,6 +24,10 @@ public:
     // Settings
     float GetFovY() const { return fovY; }
     void SetFovY(float degrees) { fovY = degrees; }
+    float GetNearPlane() const { return nearPlane; }
+    void SetNearPlane(float distance) { nearPlane = distance; }
+    float GetFarPlane() const { return farPlane; }
+    void SetFarPlane(float distance) { farPlane = distance; }
     float GetMoveSpeed() const { return moveSpeed; }
     void SetMoveSpeed(float unitsPerSecond) { moveSpeed = unitsPerSecond; }
     float GetLookSensitivity() const { return lookSensitivity; }
@@ -40,7 +44,7 @@ private:
     void UpdateFly(const ModuleInput& input);
     void UpdateOrbit(const ModuleInput& input);
     void UpdateZoom(float wheel);
-    void FocusOnScene();
+    void FocusOnSelection();
 
     glm::vec3 position{ 0.0f, 3.0f, 10.0f };
     float yaw = 0.0f;

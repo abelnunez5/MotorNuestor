@@ -24,7 +24,7 @@ void PanelInspector::DrawContent()
 
     DrawTransformSection(selected->GetTransform());
 
-    if (const MeshComponent* meshComponent = selected->GetComponent<MeshComponent>())
+    if (MeshComponent* meshComponent = selected->GetComponent<MeshComponent>())
         DrawMeshSection(*meshComponent);
 
     if (TextureComponent* textureComponent = selected->GetComponent<TextureComponent>())
@@ -49,7 +49,7 @@ void PanelInspector::DrawTransformSection(Transform& transform)
         transform.SetScale(scale);
 }
 
-void PanelInspector::DrawMeshSection(const MeshComponent& meshComponent)
+void PanelInspector::DrawMeshSection(MeshComponent& meshComponent)
 {
     if (!ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
         return;
@@ -59,7 +59,27 @@ void PanelInspector::DrawMeshSection(const MeshComponent& meshComponent)
     ImGui::Text("Vertices: %zu", mesh.GetVertices().size());
     ImGui::Text("Triangles: %zu", mesh.GetIndices().size() / 3);
 
-    // TODO (normales): checkboxes para visualizar normales por vértice y por triángulo
+    const AABB& bounds = mesh.GetBounds();
+    if (bounds.IsValid()) {
+        const glm::vec3 size = bounds.Size();
+        ImGui::Text("Bounds: %.2f x %.2f x %.2f", size.x, size.y, size.z);
+    }
+
+    ImGui::Separator();
+
+    bool vertexNormals = meshComponent.ShowVertexNormals();
+    if (ImGui::Checkbox("Show vertex normals", &vertexNormals))
+        meshComponent.SetShowVertexNormals(vertexNormals);
+
+    bool faceNormals = meshComponent.ShowFaceNormals();
+    if (ImGui::Checkbox("Show face normals", &faceNormals))
+        meshComponent.SetShowFaceNormals(faceNormals);
+
+    if (meshComponent.IsDrawingNormals()) {
+        float length = meshComponent.GetNormalsLength();
+        if (ImGui::DragFloat("Normals length", &length, 0.005f, 0.001f, 100.0f, "%.3f"))
+            meshComponent.SetNormalsLength(length);
+    }
 }
 
 void PanelInspector::DrawTextureSection(TextureComponent& component)

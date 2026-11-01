@@ -30,7 +30,7 @@ namespace {
         return HasExtension(path, ".png") || HasExtension(path, ".dds");
     }
 
-    // Las rutas de los FBX suelen venir rotas (absolutas de la máquina del artista), así que probamos varias.
+    // Las rutas de los FBX suelen venir rotas, así que probamos varias.
     std::string ResolveTexturePath(const std::string& texturePath, const std::string& modelPath)
     {
         namespace fs = std::filesystem;
@@ -148,4 +148,17 @@ bool ModuleScene::GetBounds(AABB& out) const
     out = AABB{};
     ExpandBounds(selected ? *selected : *root, out);
     return out.IsValid();
+}
+
+GameObject& ModuleScene::CreatePrimitive(Primitives::Type type)
+{
+    GameObject& gameObject = root->AddChild(Primitives::Name(type));
+    gameObject.AddComponent<TextureComponent>();
+    gameObject.AddComponent<MeshComponent>(Primitives::Create(type));
+    selected = &gameObject;
+
+    AABB bounds;
+    if (GetBounds(bounds))
+        app.GetCamera().FocusOn(bounds);
+    return gameObject;
 }

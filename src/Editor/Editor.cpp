@@ -14,6 +14,8 @@
 #include "PanelScene.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
+#include "PanelConfiguration.h"
+#include "DockLayout.h"
 
 bool Editor::Init()
 {
@@ -52,6 +54,7 @@ bool Editor::Init()
     panels.push_back(std::make_unique<PanelConsole>());
     panels.push_back(std::make_unique<PanelHierarchy>(app));
     panels.push_back(std::make_unique<PanelInspector>(app));
+    panels.push_back(std::make_unique<PanelConfiguration>(app));
 
     auto about = std::make_unique<PanelAbout>();
     aboutPanel = about.get();
@@ -73,9 +76,7 @@ UpdateStatus Editor::Update()
 {
     MainMenuBar::Draw(app, panels, *aboutPanel);
 
-#ifdef IMGUI_HAS_DOCK
-    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-#endif
+	DockLayout::Draw();
 
     for (const auto& panel : panels)
         panel->Render();

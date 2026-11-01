@@ -3,6 +3,7 @@
 #include <string>
 #include "Core/Module.h"
 #include "Math/AABB.h"
+#include "Resources/Primitives.h"
 #include "Scene/GameObject.h"
 
 class ModuleScene : public Module {
@@ -14,6 +15,8 @@ public:
     void CleanUp() override;
 
     bool LoadModel(const std::string& path);
+
+    GameObject& CreatePrimitive(Primitives::Type type);
 
     GameObject& GetRoot() { return *root; }
     const GameObject& GetRoot() const { return *root; }
