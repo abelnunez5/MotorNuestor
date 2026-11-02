@@ -6,9 +6,9 @@ A custom 3D game engine and geometry visualizer built in **C++** and **OpenGL** 
 
 ## Team Members & GitHub Profiles
 
-* **Abel Núñez Oliva:** [abelnunez5](https://github.com/abelnunez5)
-* **Pol:** [Lexmaoo](https://github.com/Lexmaoo)
-* **Andrea:** [veawenn](https://github.com/veawenn)
+* **Abel Núñez:** [abelnunez5](https://github.com/abelnunez5)
+* **Pol Cuenca:** [Lexmaoo](https://github.com/Lexmaoo)
+* **Andrea Vélez:** [veawenn](https://github.com/veawenn)
 
 ## How to Use
 
