@@ -14,6 +14,8 @@ A custom 3D game engine and geometry visualizer built in **C++** and **OpenGL** 
 
 ### Camera & Navigation Controls
 
+* **WASD Movement:** Hold **Right Click + Any W A S D key** To move the camera like a first person shooter.
+* **Speed Boost:** When WASD moving Hold **Shift** to move the camera faster.
 * **Pan / Movement:** Hold **Alt + Left Click** and drag the mouse to move the camera.
 * **Camera Rotation:** Hold **Right Click** and drag to freely rotate the camera view around its focal point.
 * **Zoom:** Use the **Mouse Scroll Wheel** to zoom in and out.
